@@ -1,0 +1,44 @@
+[project]
+name = "hw3-svix-crash"
+version = "0.1.0"
+description = "SVIX and the probability of a crash: a daily monitor built from E-mini S&P 500 option settlements, and the Martin-Shi single-name bounds"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+# Exact pins, the same versions HW 1 and HW 2 run on, so that one environment
+# serves every repository this quarter. `uv lock` resolves the rest and writes
+# uv.lock; `uv run doit` installs from the lock and runs the pipeline.
+dependencies = [
+    # Core data stack
+    "numpy==2.5.3",
+    "pandas==2.2.3",
+    "scipy==1.18.1",
+    "pyarrow==23.0.1",
+    "polars==1.9.0",
+    # Charts
+    "matplotlib==3.11.2",
+    "plotly==7.1.0",
+    # Data sources
+    "wrds==3.5.0",
+    "requests==2.32.3",
+    "databento==0.87.0",
+    # Pipeline and configuration
+    "doit==0.37.0",
+    "python-decouple==3.8",
+    "chartbook==0.1.1",
+    # Notebooks
+    "jupytext==1.19.5",
+    "nbconvert==7.17.1",
+    "ipykernel==7.3.0",
+    "ipython==9.8.0",
+    # Tests and linting
+    "pytest==9.1.1",
+    "ruff==0.15.2",
+]
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::Warning"]
+testpaths = ["src"]
+addopts = "--doctest-modules --ignore=src/settings.py --ignore-glob=src/*_ipynb.py"
+
+[tool.ruff]
+line-length = 100

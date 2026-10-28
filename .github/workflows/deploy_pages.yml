@@ -1,0 +1,190 @@
+name: Build and Deploy the SVIX Monitor
+
+# The daily monitor. Every morning this workflow pulls the most recent
+# E-mini option session from Databento, computes SVIX and the crash
+# probabilities for it, adds the row to the history if it is not there yet,
+# records the history on the monitor-history branch, rebuilds the monitor's
+# page from the history, and publishes it to GitHub Pages.
+#
+# Three branches, one job each. `main` is the source code, and nothing here
+# ever writes to it. `monitor-history` holds one file, the series the chart
+# plots, and gains one small commit a day. `gh-pages` holds the page, one
+# HTML file with the chart, as a single commit that each run replaces. So no
+# output ever lands on `main`, and the only thing that accumulates is the
+# series itself.
+#
+# The history behind the chart comes from a separate job, backfill.yml:
+# started by hand with a start date, it pulls every session from that date
+# on and records the rows the same way. Run it once after the first deploy,
+# and again if an outage ever leaves a gap.
+#
+# Runs only in a PUBLIC repository in your own account, never in the graded
+# copy in the course organization (see the `if:` on the job): a private
+# repository has neither free Actions minutes nor GitHub Pages, and the
+# workflow needs your Databento key as a repository secret.
+#
+# One-time wiring, after the first push of this file to your public repo:
+#   Settings > Secrets and variables > Actions > New repository secret:
+#     DATABENTO_API_KEY = (your key)
+#   Actions tab > this workflow > Run workflow (a few minutes; the first run
+#     creates both branches, with the latest session as the history)
+#   Actions tab > Backfill the SVIX Monitor's History > Run workflow, with a
+#     start date (a minute or two per session: four weeks is about half an
+#     hour)
+#   Settings > Pages > Deploy from a branch > gh-pages / (root)
+#
+# Cron syntax reference:
+# ┌───────────── minute (0-59)
+# │ ┌───────────── hour (0-23, UTC: GitHub Actions cron always runs in UTC)
+# │ │ ┌───────────── day of month (1-31)
+# │ │ │ ┌───────────── month (1-12)
+# │ │ │ │ ┌───────────── day of week (0-6, Sunday=0)
+# │ │ │ │ │
+# 30 14 * * *  -> every day at 14:30 UTC (8:30-9:30 AM Chicago). CME
+#                 publishes final settlements the previous evening, and
+#                 Databento's historical feed has them by this hour.
+on:
+  schedule:
+    - cron: '0 0 * * *'  # TODO: every day at 14:30 UTC, not midnight; the comment above explains the five fields
+  workflow_dispatch: {}  # the manual "Run workflow" button
+  push:
+    branches: [main]
+
+# GITHUB_TOKEN needs write access to push the history branch and to
+# force-push the gh-pages branch.
+permissions:
+  contents: read  # TODO: the job pushes the history branch and force-pushes gh-pages. Is read enough?
+
+# Never let two deploys interleave their pushes (the daily cron racing a
+# push to main). The newest run supersedes an in-flight one.
+concurrency:
+  group: deploy-svix-monitor
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    # Skip the graded copies in the course organization.
+    if: github.repository_owner != 'hw-finm-32800'
+    runs-on: ubuntu-latest
+    env:
+      TZ: "America/Chicago"
+      # The branch that keeps the series between runs, and the one file on it.
+      HISTORY_BRANCH: monitor-history
+      HISTORY_FILE: svix_monitor_history.csv
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Restore the history from the monitor-history branch
+        # The series the chart plots lives on its own branch, as one file,
+        # and each run starts from the copy there. The checkout above
+        # fetched `main` only, so the branch is fetched by name, and
+        # `git show` reads the file from it without checking it out. On the
+        # very first run the branch does not exist yet: the history starts
+        # with today's session, and the record step below creates the branch.
+        run: |
+          mkdir -p _output
+          if git fetch --quiet origin "$HISTORY_BRANCH:$HISTORY_BRANCH" 2>/dev/null; then
+            git show "$HISTORY_BRANCH:$HISTORY_FILE" > "_output/$HISTORY_FILE"
+            echo "Restored $(( $(wc -l < "_output/$HISTORY_FILE") - 1 )) sessions from $HISTORY_BRANCH"
+          else
+            echo "No $HISTORY_BRANCH branch yet: the history starts with today's session"
+          fi
+
+      - name: Set up uv
+        # Installs uv; `uv run` then installs Python 3.12 (from
+        # .python-version) and the locked dependencies (from uv.lock).
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Update the monitor (pull the latest session, add its row, rebuild the page)
+        id: monitor
+        # Allowed to fail: the next step decides whether a failure is a data
+        # source being down or a bug.
+        continue-on-error: true
+        env:
+          # TODO: the pull needs your Databento key. It must come from the
+          # repository's secret store, never from this file. See
+          # https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
+          DATABENTO_API_KEY: TODO
+        # TODO: the command that pulls the latest session, adds its row to the
+        # history, and rebuilds the page (the daily update task in dodo.py),
+        # run through uv.
+        run: TODO
+
+      - name: Tell an outage from a bug
+        # The pulls retry server and network errors, waiting longer each
+        # time, for about eight minutes. A source still down after that
+        # leaves the file _output/SOURCE_UNAVAILABLE. Then the run ends here
+        # with a warning and yesterday's page stays up. The next run's pull
+        # window reaches back a few days and fills a short gap; the backfill
+        # workflow fills a long one. Any other failure is a bug, and it
+        # fails the run.
+        if: steps.monitor.outcome == 'failure'
+        run: |
+          if [ -f _output/SOURCE_UNAVAILABLE ]; then
+            echo "::warning::$(head -1 _output/SOURCE_UNAVAILABLE) Yesterday's site stays up; the next run fills the gap."
+          else
+            echo "::error::The monitor step failed, and not because a data source was down. Read its log."
+            exit 1
+          fi
+
+      - name: Configure git identity
+        if: steps.monitor.outcome == 'success'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Record the new sessions on the monitor-history branch
+        if: steps.monitor.outcome == 'success'
+        # A second working directory on the history branch (`git worktree`),
+        # staged OUTSIDE the repo checkout, so that the build below never
+        # sees it. The file is copied in and committed: one small commit a
+        # day, and none at all when nothing is new (a weekend run). A push
+        # to this branch does not start the workflow, which listens to
+        # pushes on main only, so nothing loops.
+        run: |
+          HISTORY="$RUNNER_TEMP/history"
+          if git show-ref --quiet "refs/heads/$HISTORY_BRANCH"; then
+            git worktree add "$HISTORY" "$HISTORY_BRANCH"
+          else
+            git worktree add --orphan -b "$HISTORY_BRANCH" "$HISTORY"
+          fi
+          cp "_output/$HISTORY_FILE" "$HISTORY/"
+          cd "$HISTORY"
+          git add "$HISTORY_FILE"
+          git diff --cached --quiet || git commit -m "Monitor: through $(tail -n 1 "$HISTORY_FILE" | cut -d, -f1)"
+          git push origin "$HISTORY_BRANCH"
+
+      - name: Stage the page
+        if: steps.monitor.outcome == 'success'
+        # `doit latest` rebuilt the page, _output/monitor_page/index.html,
+        # from the history alone. It is all that is published: the notebooks
+        # and the ChartBook site are for building locally, and they show
+        # more of the data than a public page should.
+        run: |
+          SITE="$RUNNER_TEMP/site"          # staged OUTSIDE the repo checkout
+          mkdir -p "$SITE"
+          cp -r _output/monitor_page/. "$SITE/"
+          # Tell GitHub Pages not to run Jekyll on it
+          touch "$SITE/.nojekyll"
+
+      - name: Deploy to gh-pages (single orphan commit, force-pushed)
+        if: steps.monitor.outcome == 'success'
+        run: |
+          # Orphan branch = no parent commits, so gh-pages always contains
+          # exactly ONE commit no matter how many times this workflow runs.
+          git checkout --orphan TODO  # TODO: the branch GitHub Pages serves the page from
+          git rm -rf --quiet .
+          # git rm only removes *tracked* files; also purge untracked and
+          # gitignored build leftovers (_data/, _output/, docs/, .venv/) so
+          # nothing from the build sneaks into the published site.
+          git clean -fdx --quiet
+          cp -r "$RUNNER_TEMP/site/." .
+          git add -A
+          git commit -m "Deploy SVIX monitor $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push --force origin TODO  # TODO: the same branch

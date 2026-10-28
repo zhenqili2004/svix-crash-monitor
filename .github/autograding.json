@@ -1,0 +1,44 @@
+{
+  "assignment": "HW 3: SVIX and the Probability of a Crash",
+  "parts": [
+    {
+      "name": "Part A: GitHub Skills",
+      "tests": [
+        {"nodeid": "src/test_github_skills.py::test_hello_github_actions", "points": 1},
+        {"nodeid": "src/test_github_skills.py::test_secret_scanning", "points": 1}
+      ]
+    },
+    {
+      "name": "Part B: SVIX and the probability of a crash",
+      "tests": [
+        {"nodeid": "src/test_svix.py::test_svix_flat_smile", "points": 1},
+        {"nodeid": "src/test_svix.py::test_svix_matches_martin", "points": 1},
+        {"nodeid": "src/test_rnd.py::test_cdf_is_valid", "points": 1},
+        {"nodeid": "src/test_rnd.py::test_cdf_flat_smile_is_lognormal", "points": 1},
+        {"nodeid": "src/test_crash_prob.py::test_bound_flat_smile", "points": 1}
+      ]
+    },
+    {
+      "name": "Part C: the daily monitor",
+      "tests": [
+        {"nodeid": "src/test_dodo.py::test_task_latest", "points": 1},
+        {"nodeid": "src/test_chartbook_toml.py::test_chartbook_toml", "points": 1},
+        {"nodeid": "src/test_workflow.py::test_workflow_has_a_daily_schedule", "points": 1},
+        {"nodeid": "src/test_workflow.py::test_workflow_reads_the_key_from_a_secret", "points": 1},
+        {"nodeid": "src/test_workflow.py::test_workflow_can_push", "points": 1},
+        {"nodeid": "src/test_workflow.py::test_workflow_runs_the_pipeline_with_uv", "points": 1},
+        {"nodeid": "src/test_workflow.py::test_workflow_deploys_to_gh_pages", "points": 1},
+        {"nodeid": "src/test_published_site.py::test_monitor_deployed", "points": 1}
+      ]
+    },
+    {
+      "name": "Part D: single names, from the OptionMetrics surface",
+      "tests": [
+        {"nodeid": "src/test_pull_optionmetrics.py::test_query_selects_secids", "points": 1},
+        {"nodeid": "src/test_pull_optionmetrics.py::test_query_selects_maturities_and_dates", "points": 1},
+        {"nodeid": "src/test_single_name_bounds.py::test_index_probabilities_computed", "points": 1},
+        {"nodeid": "src/test_single_name_bounds.py::test_spx_crash_probability_matches_martin", "points": 1}
+      ]
+    }
+  ]
+}

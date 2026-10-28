@@ -1,0 +1,94 @@
+name: Backfill the SVIX Monitor's History
+
+# A job run by hand, once or occasionally, from the Actions tab: Run workflow,
+# then a start date. It pulls every session from that date to today, computes
+# the rows the history does not have yet, and records them on the
+# monitor-history branch, exactly as the daily workflow does for the latest
+# session. Run it once after the first deploy, so the chart has a history
+# behind it, and again if an outage ever leaves a gap longer than the daily
+# window reaches.
+#
+# A session is a minute or two to pull, so four weeks is about half an hour.
+# Start it at any time other than 14:30 UTC: the daily run shares this job's
+# concurrency group and would cancel it. It does not rebuild the page; the
+# next daily run does, or press Run workflow on Build and Deploy.
+on:
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: "Backfill from this date (YYYY-MM-DD)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+# The same group as the daily deploy, so the two never push to the history
+# branch at the same time.
+concurrency:
+  group: deploy-svix-monitor
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    if: github.repository_owner != 'hw-finm-32800'
+    runs-on: ubuntu-latest
+    env:
+      TZ: "America/Chicago"
+      HISTORY_BRANCH: monitor-history
+      HISTORY_FILE: svix_monitor_history.csv
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Restore the history from the monitor-history branch
+        # As in the daily workflow: the branch is fetched by name, and the
+        # file read from it with `git show`. With no branch yet, the history
+        # starts empty and the record step below creates the branch.
+        run: |
+          mkdir -p _output
+          if git fetch --quiet origin "$HISTORY_BRANCH:$HISTORY_BRANCH" 2>/dev/null; then
+            git show "$HISTORY_BRANCH:$HISTORY_FILE" > "_output/$HISTORY_FILE"
+            echo "Restored $(( $(wc -l < "_output/$HISTORY_FILE") - 1 )) sessions from $HISTORY_BRANCH"
+          else
+            echo "No $HISTORY_BRANCH branch yet: the history starts with this backfill"
+          fi
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Backfill (pull every session from the start date, add the missing rows)
+        env:
+          DATABENTO_API_KEY: ${{ secrets.DATABENTO_API_KEY }}
+          # The first half of the default pipeline: the pulls over
+          # START_DATE..END_DATE and the rows the history does not have. The
+          # settings read START_DATE from the environment, and END_DATE
+          # defaults to today. The next daily run rebuilds the site.
+          START_DATE: ${{ inputs.start_date }}
+        run: uv run doit pull compute_history
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Record the new sessions on the monitor-history branch
+        # As in the daily workflow: a second working directory on the history
+        # branch, outside the checkout; copy the file in, commit, push.
+        run: |
+          HISTORY="$RUNNER_TEMP/history"
+          if git show-ref --quiet "refs/heads/$HISTORY_BRANCH"; then
+            git worktree add "$HISTORY" "$HISTORY_BRANCH"
+          else
+            git worktree add --orphan -b "$HISTORY_BRANCH" "$HISTORY"
+          fi
+          cp "_output/$HISTORY_FILE" "$HISTORY/"
+          cd "$HISTORY"
+          git add "$HISTORY_FILE"
+          git diff --cached --quiet || git commit -m "Monitor: backfill from ${{ inputs.start_date }}, through $(tail -n 1 "$HISTORY_FILE" | cut -d, -f1)"
+          git push origin "$HISTORY_BRANCH"

@@ -1,0 +1,76 @@
+[project]
+name = "HW 3 - SVIX and the Probability of a Crash"
+description = "Ian Martin's SVIX index and option-implied crash probabilities, rebuilt every morning from E-mini S&P 500 option settlements on CME Globex; and the Martin-Shi crash bounds for single names from the OptionMetrics surface"
+maintainer = "Jeremiah Bejarano"
+contributors = ["Jeremiah Bejarano", "Riley Haas", "Marija Jovicic", "Andrew Heekin", "Chandler Bird"]
+os_compatibility = ["Windows", "Linux", "macOS"]
+build = """
+uv run doit
+"""
+
+[notebooks]
+
+
+[notebooks.01_es_options_data_ipynb]
+name = "E-mini S&P 500 Options Data from Databento"
+description = "What the end-of-month E-mini options are, what a settlement price is, how the Databento pull works, and what one session's smile looks like."
+path = "_output/01_es_options_data_ipynb.ipynb"
+
+
+[notebooks.02_svix_and_crash_probability_ipynb]
+name = "Replicating SVIX and the Probability of a Crash"
+description = "From settlement prices to the simple variance swap rate, the risk-neutral distribution by Breeden-Litzenberger, and the probability of a 20% drop; checked against the Cboe VIX, with the SVIX integral checked against Martin's published series in guide 04."
+path = "_output/02_svix_and_crash_probability_ipynb.ipynb"
+
+
+# TODO: Register the monitor notebook, `03_daily_monitor_ipynb`, following
+# the two entries above: a name, a description, and the path of the executed
+# notebook that `doit` leaves in `_output/`.
+
+
+[notebooks.04_single_name_crash_bounds_ipynb]
+name = "Crash Bounds for Single Names (Martin and Shi 2025)"
+description = "The Frechet-Hoeffding bounds on the probability that Apple or AIG falls 20% in a month, from the OptionMetrics surface; and the index probability checked against Martin's published series."
+path = "_output/04_single_name_crash_bounds_ipynb.ipynb"
+
+
+[dataframes]
+
+
+[dataframes.es_options_settlements]
+name = "E-mini S&P 500 Option Settlements (Databento)"
+description = "One row per listed end-of-month E-mini S&P 500 option per session: the exchange's settlement price, joined to the contract's expiration, strike, and right; the trailing week"
+path = "_data/es_options_settlements.parquet"
+date_col = "date"
+tags = ["Options", "Volatility", "Databento"]
+pull_method = "Databento Historical API via src/pull_es_options.py (cost-guarded)"
+docs = """Settlement prices (`statistics` schema, `stat_type` 3) for every
+listed contract under the parent symbol `EW.OPT` on CME Globex (`GLBX.MDP3`),
+joined to the exchange's `definition` records for the expiration date, the
+strike, and the right. Settlements exist for every strike, traded or not,
+which is why they, and not daily bars, feed the smile. `doit` pulls the
+window in the settings again when it changes; `doit latest` pulls the most
+recent session."""
+
+
+# TODO: Register the monitor's history as `[dataframes.svix_monitor_history]`,
+# following the entry above. It is the CSV in `_output/` that
+# `src/monitor.py` writes, and that the deploy workflow keeps on the
+# `monitor-history` branch. Document it: a name, a description, the path,
+# which column holds the date (`date_col`), how it is produced, and what a
+# reader needs to know (`docs`). The chart below refers to this entry by
+# name, so the site does not build until it exists.
+
+
+[charts]
+
+
+[charts.svix_monitor]
+name = "SVIX and the Probability of a Crash"
+description = "The 30-day SVIX next to the VIX, and the probability of a 20% drop in the S&P 500 within a month under three sets of beliefs"
+dataframe = "svix_monitor_history"
+tags = ["Options", "Volatility", "Monitor"]
+frequency = "Daily"
+units = "Annualized volatility (%); probability (%)"
+path = "./_output/svix_monitor.html"
+docs_path = "./docs_src/charts/svix_monitor.md"

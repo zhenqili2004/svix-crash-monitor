@@ -1,0 +1,112 @@
+name: Autograding
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  autograde:
+    name: Run tests and score
+    # Grade only the students' copies, and only pushes made by students.
+    # The source of truth in finm-32800 has no runner, so its runs would sit
+    # in the queue forever. A copy made from the template starts with a
+    # commit named "Initial commit", and grading that untouched copy would
+    # only email the instructor a failure for every student. Pushes by the
+    # instructor (a fix pushed to every copy) or by a bot or app acting for
+    # the organization are not submissions either. A manual run from the
+    # Actions tab still grades, so the instructor can regrade a copy.
+    if: >-
+      github.repository_owner == 'hw-finm-32800' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event.head_commit.message != 'Initial commit' &&
+        github.actor != 'jmbejara' &&
+        !endsWith(github.actor, '[bot]')))
+    # A newer push replaces an older one, so grade only the newest: a new run
+    # cancels any older run in its group, whether that run is still queued or
+    # already running. The group is per repository, workflow, branch, and
+    # pusher, so a student's pushes only ever cancel that student's own runs.
+    # The pusher is part of the key so that an instructor push, which the
+    # condition above skips, never joins a student's group and cancels a run
+    # that was about to produce a grade.
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ github.actor }}
+      cancel-in-progress: true
+    # Self-hosted macOS runner. It holds a cached copy of the pulled data, so
+    # the graded run does not need to hit WRDS and does not need each
+    # student's credentials.
+    runs-on: [self-hosted, macOS]
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up the environment
+        run: |
+          set -euo pipefail
+          # The pins in requirements.txt need Python 3.12. A bare `python3` on
+          # the runner resolves to an older interpreter.
+          python3.12 -m venv .venv
+          ./.venv/bin/python -m pip install --upgrade pip
+          ./.venv/bin/python -m pip install -r requirements.txt
+
+      - name: Find the cached data
+        # A submission must be graded against the instructor's copy of the
+        # pulled data, never against anything committed in the repository.
+        #
+        # DATA_DIR is defined in the .env file in the root of the runner's
+        # directory. It names the folder that holds one read-only cache per
+        # assignment. Because it is an environment variable, it overrides both
+        # the `_data` default in settings.py and any .env file committed with
+        # a submission.
+        run: |
+          set -euo pipefail
+          if [ -z "${DATA_DIR:-}" ]; then
+            echo "::error::DATA_DIR is not set. Define it in the .env file in the root of the runner's directory, then restart the runner."
+            exit 1
+          fi
+          CACHE="$DATA_DIR/hw3"
+          # Only the pulled inputs. The derived parquet files are what the
+          # student's code is supposed to produce, so the cache never holds
+          # them. A missing input has to stop the run: the test suite would
+          # otherwise skip the tests that need it and report a low score.
+          missing=0
+          for f in es_options_settlements.parquet es_futures_settlements.parquet \
+                   fred_vix_rates.parquet optionm_vol_surface.parquet \
+                   optionm_security_prices.parquet optionm_zero_curve.parquet; do
+            if [ ! -f "$CACHE/$f" ]; then
+              echo "::error::$f is missing from $CACHE on the runner."
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+          # The steps below read DATA_DIR through settings.py.
+          echo "DATA_DIR=$CACHE" >> "$GITHUB_ENV"
+          # _data and _output are gitignored, so this clears force-added files.
+          rm -rf _data _output
+          mkdir -p _output
+
+      - name: Compute the single-name results from the cached surface
+        # Part D's last test compares the index crash probability computed
+        # from the cached OptionMetrics surface with Martin's published
+        # series, so the chain has to run before pytest. It uses the
+        # submission's own engine (rnd.py), so a wrong Breeden-Litzenberger
+        # step shows up here as well as in Part B.
+        continue-on-error: true
+        run: ./.venv/bin/python src/single_name_bounds.py
+
+      - name: Run the test suite
+        # Allowed to fail: an incomplete submission is expected to have
+        # failures, and the score comes from the report, not the exit code.
+        continue-on-error: true
+        run: |
+          ./.venv/bin/python -m pytest --junitxml=_output/test-results.xml -v
+
+      - name: Score the submission
+        run: ./.venv/bin/python .github/scripts/autograde.py _output/test-results.xml
