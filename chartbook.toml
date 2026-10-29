@@ -23,9 +23,10 @@ description = "From settlement prices to the simple variance swap rate, the risk
 path = "_output/02_svix_and_crash_probability_ipynb.ipynb"
 
 
-# TODO: Register the monitor notebook, `03_daily_monitor_ipynb`, following
-# the two entries above: a name, a description, and the path of the executed
-# notebook that `doit` leaves in `_output/`.
+[notebooks.03_daily_monitor_ipynb]
+name = "The Daily Monitor"
+description = "SVIX, the VIX, and the probability of a 20% drop as one row per session; the monitor's history, the chart, and the page the deploy workflow publishes."
+path = "_output/03_daily_monitor_ipynb.ipynb"
 
 
 [notebooks.04_single_name_crash_bounds_ipynb]
@@ -53,13 +54,18 @@ window in the settings again when it changes; `doit latest` pulls the most
 recent session."""
 
 
-# TODO: Register the monitor's history as `[dataframes.svix_monitor_history]`,
-# following the entry above. It is the CSV in `_output/` that
-# `src/monitor.py` writes, and that the deploy workflow keeps on the
-# `monitor-history` branch. Document it: a name, a description, the path,
-# which column holds the date (`date_col`), how it is produced, and what a
-# reader needs to know (`docs`). The chart below refers to this entry by
-# name, so the site does not build until it exists.
+[dataframes.svix_monitor_history]
+name = "SVIX Monitor History"
+description = "One row per session: SVIX at a constant 30-day horizon, the VIX from FRED, and three option-implied probabilities of a 20% drop (risk-neutral, log-utility, power utility gamma=2); grown by one row a day by the deploy workflow."
+path = "_output/svix_monitor_history.csv"
+date_col = "date"
+pull_method = "src/monitor.py: one row per session from the E-mini settlements and the one-month Treasury yield; the deploy workflow keeps the file between runs on the monitor-history branch."
+docs = """Grows by one point a day. svix_30 is interpolated between the two
+end-of-month expirations that bracket 30 days (same convention as the VIX).
+p_star_20 is the risk-neutral probability of a 20% drop; p_log_20 is the
+log-utility correction (Martin 2017); p_power_20 is power utility at
+gamma=2 (Martin and Shi 2025). A missing VIX means FRED had not posted the
+close when the run started; it is backfilled on the next run."""
 
 
 [charts]

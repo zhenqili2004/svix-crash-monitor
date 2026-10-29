@@ -1,0 +1,18 @@
+{
+    "venvPath": ".",
+    "venv": ".venv",
+    "extraPaths": ["src"],
+    "typeCheckingMode": "basic",
+    "reportUnusedExpression": "none",
+    "reportMissingTypeStubs": "none",
+    "reportMissingImports": "none",
+    "reportIndexIssue": "none",
+    "reportCallIssue": "none",
+    "reportArgumentType": "none",
+    "reportAttributeAccessIssue": "none",
+    "reportGeneralTypeIssues": "none",
+    "reportOptionalMemberAccess": "none",
+    "reportAssignmentType": "none",
+    "reportDeprecated": "none",
+    "reportOperatorIssue": "none"
+}
