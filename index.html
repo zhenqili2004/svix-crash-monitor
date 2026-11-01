@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SVIX and the Probability of a Crash</title>
+<style>
+  :root { --ink: #1b1f24; --muted: #5b6470; --rule: #e3e6ea; --accent: #1d4f91; --bg: #ffffff; --panel: #f6f8fa; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 32px 20px 48px; }
+  .eyebrow { color: var(--accent); font-weight: 600; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 6px; }
+  h1 { font-size: 32px; line-height: 1.2; margin: 0 0 8px; }
+  h2 { font-size: 19px; margin: 36px 0 10px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 24px; }
+  .reading { display: flex; gap: 24px; align-items: center; background: var(--panel);
+             border: 1px solid var(--rule); border-radius: 10px; padding: 18px 22px; margin-bottom: 22px; }
+  .stats { display: flex; gap: 18px; }
+  .stat { text-align: center; min-width: 170px; }
+  .stat .value { display: block; font-size: 40px; font-weight: 700; color: var(--accent); line-height: 1; }
+  .stat .unit { display: block; color: var(--muted); font-size: 13px; margin-top: 6px; }
+  .date { display: block; font-weight: 600; font-size: 14px; margin-top: 4px; text-align: center; }
+  .reading p { margin: 4px 0; }
+  figure { margin: 0; }
+  figcaption { color: var(--muted); font-size: 14px; border-top: 1px solid var(--rule); padding-top: 10px; margin-top: 4px; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; min-width: 560px; font-size: 15px; }
+  td, th { padding: 5px 14px 5px 0; border-bottom: 1px solid var(--rule); text-align: left; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  ol { padding-left: 22px; } li { margin: 6px 0; }
+  code { background: var(--panel); padding: 1px 5px; border-radius: 4px; font-size: 14px; }
+  a { color: var(--accent); }
+  footer { margin-top: 40px; padding-top: 14px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 13px; }
+  footer p { margin: 6px 0; }
+  @media (max-width: 640px) { .reading { flex-direction: column; text-align: center; } h1 { font-size: 26px; } }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Daily monitor &middot; updated by GitHub Actions</p>
+  <h1>SVIX and the probability of a crash</h1>
+  <p class="lede">Ian Martin's SVIX index and the option-implied probability of a 20% drop in the S&amp;P 500
+  within a month, computed every morning from the settlement prices of E-mini S&amp;P 500 options.</p>
+
+  <section class="reading" aria-label="Latest reading">
+    <div>
+      <div class="stats">
+        <div class="stat"><span class="value">0.55%</span><span class="unit">probability of a 20% drop,<br>log investor</span></div>
+        <div class="stat"><span class="value">17.9</span><span class="unit">SVIX, 30-day<br>(annualized %)</span></div>
+      </div>
+      <span class="date">October 30, 2026</span>
+    </div>
+    <div><p>The options market prices a 20% drop in the S&P 500 over the next 31 days at 0.80% (risk-neutral). A log investor who holds the market reads that as 0.55%; a more risk-averse investor (power utility, &gamma; = 2), as 0.38%.</p><p>Change in SVIX: +0.1 over a week.</p></div>
+  </section>
+
+  <figure>
+    <div style="height:620px; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-4.1.1.min.js" integrity="sha256-O24V1F27f8pb0glCkelh3cVHLNiHAJ5gCaVtq2aNch8=" crossorigin="anonymous"></script>                <div id="d1761b73-a7f3-4d50-aa76-f97c012a69a8" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("d1761b73-a7f3-4d50-aa76-f97c012a69a8")) {                    Plotly.newPlot(                        "d1761b73-a7f3-4d50-aa76-f97c012a69a8",                        [{"mode":"lines","name":"SVIX (30-day)","x":["2026-10-01T00:00:00.000000000","2026-10-02T00:00:00.000000000","2026-10-05T00:00:00.000000000","2026-10-06T00:00:00.000000000","2026-10-07T00:00:00.000000000","2026-10-08T00:00:00.000000000","2026-10-09T00:00:00.000000000","2026-10-12T00:00:00.000000000","2026-10-13T00:00:00.000000000","2026-10-14T00:00:00.000000000","2026-10-15T00:00:00.000000000","2026-10-16T00:00:00.000000000","2026-10-19T00:00:00.000000000","2026-10-20T00:00:00.000000000","2026-10-21T00:00:00.000000000","2026-10-22T00:00:00.000000000","2026-10-23T00:00:00.000000000","2026-10-26T00:00:00.000000000","2026-10-27T00:00:00.000000000","2026-10-28T00:00:00.000000000","2026-10-29T00:00:00.000000000","2026-10-30T00:00:00.000000000"],"y":{"dtype":"f8","bdata":"oFOQn41ML0Df\u002flw0ZEQtQDofniXIOC1AymyQSUZeLEBF1ESfj0IsQECmtWls\u002fyxAsaIG0zCUK0CmfXN\u002f9UAsQHo1QGmoWSxAAI49ey7bLkBkPbX66houQC0j9Z7KtTFAvY3NjlSjMECfWRKgpsYvQBEBh1Clvi5AmiZsPxlLMUCV2LW93dYxQGTpQxfUmzBArFJ6ppfgL0Ay5UNQNcouQFORCmML8S1AA8+9h0vyMUA="},"type":"scatter","xaxis":"x","yaxis":"y"},{"line":{"color":"gray","width":1},"mode":"lines","name":"VIX","x":["2026-10-01T00:00:00.000000000","2026-10-02T00:00:00.000000000","2026-10-05T00:00:00.000000000","2026-10-06T00:00:00.000000000","2026-10-07T00:00:00.000000000","2026-10-08T00:00:00.000000000","2026-10-09T00:00:00.000000000","2026-10-12T00:00:00.000000000","2026-10-13T00:00:00.000000000","2026-10-14T00:00:00.000000000","2026-10-15T00:00:00.000000000","2026-10-16T00:00:00.000000000","2026-10-19T00:00:00.000000000","2026-10-20T00:00:00.000000000","2026-10-21T00:00:00.000000000","2026-10-22T00:00:00.000000000","2026-10-23T00:00:00.000000000","2026-10-26T00:00:00.000000000","2026-10-27T00:00:00.000000000","2026-10-28T00:00:00.000000000","2026-10-29T00:00:00.000000000","2026-10-30T00:00:00.000000000"],"y":{"dtype":"f8","bdata":"pHA9CtdjMEAfhetRuJ4uQArXo3A9Ci9AhetRuB4FLkApXI\u002fC9SguQFK4HoXr0S5ArkfhehSuLUDsUbgehWsuQArXo3A9ii5AH4XrUbjeMED2KFyPwnUwQD0K16Nw\u002fTNAcT0K16NwMkCPwvUoXE8xQK5H4XoUrjBASOF6FK4HM0AzMzMzM3MzQKRwPQrXYzJAhetRuB6FMUApXI\u002fC9egwQDMzMzMzMzFAAAAAAAAA+H8="},"type":"scatter","xaxis":"x","yaxis":"y"},{"mode":"lines","name":"Risk-neutral P*","x":["2026-10-01T00:00:00.000000000","2026-10-02T00:00:00.000000000","2026-10-05T00:00:00.000000000","2026-10-06T00:00:00.000000000","2026-10-07T00:00:00.000000000","2026-10-08T00:00:00.000000000","2026-10-09T00:00:00.000000000","2026-10-12T00:00:00.000000000","2026-10-13T00:00:00.000000000","2026-10-14T00:00:00.000000000","2026-10-15T00:00:00.000000000","2026-10-16T00:00:00.000000000","2026-10-19T00:00:00.000000000","2026-10-20T00:00:00.000000000","2026-10-21T00:00:00.000000000","2026-10-22T00:00:00.000000000","2026-10-23T00:00:00.000000000","2026-10-26T00:00:00.000000000","2026-10-27T00:00:00.000000000","2026-10-28T00:00:00.000000000","2026-10-29T00:00:00.000000000","2026-10-30T00:00:00.000000000"],"y":{"dtype":"f8","bdata":"pJr+kY4X3j\u002fT7dOObsbVP+\u002f3F4N\u002f+NE\u002fHCUzB9aryT9yNwSe5qrJPy7UUFkDys4\u002fjqCl6bt0wz9VB0hNHsO+P6sLeJlho7k\u002fODTAYJKlyT8pWAR7I6XJP3ZeGQqOYfM\u002fEbKHUWsV8D+qykrVbsLpP7QuwesrVuU\u002fwVGXMaoR8D\u002fPyd6U6mnvP+ngT0MKtOk\u002f6GNfLrl85j+EjR0aN\u002fHiPxkoY1uKFOE\u002flNFUkQKy6T8="},"type":"scatter","xaxis":"x2","yaxis":"y2"},{"mode":"lines","name":"Log investor (Martin 2017)","x":["2026-10-01T00:00:00.000000000","2026-10-02T00:00:00.000000000","2026-10-05T00:00:00.000000000","2026-10-06T00:00:00.000000000","2026-10-07T00:00:00.000000000","2026-10-08T00:00:00.000000000","2026-10-09T00:00:00.000000000","2026-10-12T00:00:00.000000000","2026-10-13T00:00:00.000000000","2026-10-14T00:00:00.000000000","2026-10-15T00:00:00.000000000","2026-10-16T00:00:00.000000000","2026-10-19T00:00:00.000000000","2026-10-20T00:00:00.000000000","2026-10-21T00:00:00.000000000","2026-10-22T00:00:00.000000000","2026-10-23T00:00:00.000000000","2026-10-26T00:00:00.000000000","2026-10-27T00:00:00.000000000","2026-10-28T00:00:00.000000000","2026-10-29T00:00:00.000000000","2026-10-30T00:00:00.000000000"],"y":{"dtype":"f8","bdata":"LgKlmdVY1T8Tvc5+i2vOP9h66ZqHG8k\u002fW\u002fO6sPuvwT9QBZrXKiTCP3T8o7HuBsY\u002fShn+9Bv9uj+actS9jU61PxMEl+A3srE\u002fOcl\u002fFoU8wj8G1lDuZ8bBP2zMDJcseek\u002fGqyTjs2p5T\u002fMxjEvE0fhP3ABDdu7q9w\u002fqZBEks3T5T8fejmJlAjlP8AiAZtac+E\u002floDSL5Xn3j+iyWpf5fXZPzmjexDhY9c\u002fjmht4C+C4T8="},"type":"scatter","xaxis":"x2","yaxis":"y2"},{"mode":"lines","name":"Power utility, gamma=2","x":["2026-10-01T00:00:00.000000000","2026-10-02T00:00:00.000000000","2026-10-05T00:00:00.000000000","2026-10-06T00:00:00.000000000","2026-10-07T00:00:00.000000000","2026-10-08T00:00:00.000000000","2026-10-09T00:00:00.000000000","2026-10-12T00:00:00.000000000","2026-10-13T00:00:00.000000000","2026-10-14T00:00:00.000000000","2026-10-15T00:00:00.000000000","2026-10-16T00:00:00.000000000","2026-10-19T00:00:00.000000000","2026-10-20T00:00:00.000000000","2026-10-21T00:00:00.000000000","2026-10-22T00:00:00.000000000","2026-10-23T00:00:00.000000000","2026-10-26T00:00:00.000000000","2026-10-27T00:00:00.000000000","2026-10-28T00:00:00.000000000","2026-10-29T00:00:00.000000000","2026-10-30T00:00:00.000000000"],"y":{"dtype":"f8","bdata":"RQDkQu3Qzj8Idh0m8aTFPw\u002f6qVxu0cE\u002fo9Phi3C\u002fuD+OILZwMAa6P0KMnREhBcA\u002f2LBGQPwxsz96rfOL7CyuP9rW36qcCqk\u002fJxpBtm57uj+LJ\u002fr9FCe5PwlP6PUnUeE\u002fXtBjEC\u002f63T8TFJp\u002fT8fXP1HxA4D4s9M\u002fr\u002fuew0JO3j\u002fWGmv7LtfcPzRCR8T3Mtg\u002fkfA5h52v1T9hZqc4cSbSP0qXQEJ7UtA\u002fLcdUj25j2D8="},"type":"scatter","xaxis":"x2","yaxis":"y2"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"matches":"x2","showticklabels":false},"yaxis":{"anchor":"x","domain":[0.54,1.0],"title":{"text":"Annualized vol, %"}},"xaxis2":{"anchor":"y2","domain":[0.0,1.0]},"yaxis2":{"anchor":"x2","domain":[0.0,0.46],"title":{"text":"Probability, %"}},"annotations":[{"font":{"size":16},"showarrow":false,"text":"Volatility indexes","x":0.5,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"Probability of a 20% drop within a month","x":0.5,"xanchor":"center","xref":"paper","y":0.46,"yanchor":"bottom","yref":"paper"}],"legend":{"orientation":"h","y":-0.12},"title":{"text":""},"height":620,"margin":{"l":60,"r":20,"t":40,"b":10},"font":{"family":"-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif","size":13}},                        {"displaylogo": false, "responsive": true}                    )                };            </script>        </div>
+    <figcaption><strong>Figure 1.</strong> Top: the 30-day SVIX next to the Cboe VIX, both annualized volatilities
+    in percent. Bottom: the probability of a 20% drop in the S&amp;P 500 by the option expiration closest to one
+    month, under three sets of beliefs: risk-neutral (what the market charges), a log investor who holds the
+    market (Martin 2017), and a power-utility investor with risk aversion 2 (Martin and Shi 2025). 22
+    sessions since October 1, 2026. Hover for the values on any day.</figcaption>
+  </figure>
+
+  <h2>Recent sessions</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Session</th><th class="num">SVIX</th><th class="num">VIX</th><th class="num">Risk-neutral</th>
+    <th class="num">Log investor</th><th class="num">&gamma; = 2</th></tr></thead>
+    <tbody>
+<tr><td>Fri, Oct 30, 2026</td><td class='num'>17.9</td><td class='num'>&ndash;</td><td class='num'>0.80%</td><td class='num'>0.55%</td><td class='num'>0.38%</td></tr>
+<tr><td>Thu, Oct 29, 2026</td><td class='num'>15.0</td><td class='num'>17.2</td><td class='num'>0.53%</td><td class='num'>0.37%</td><td class='num'>0.26%</td></tr>
+<tr><td>Wed, Oct 28, 2026</td><td class='num'>15.4</td><td class='num'>16.9</td><td class='num'>0.59%</td><td class='num'>0.41%</td><td class='num'>0.28%</td></tr>
+<tr><td>Tue, Oct 27, 2026</td><td class='num'>15.9</td><td class='num'>17.5</td><td class='num'>0.70%</td><td class='num'>0.48%</td><td class='num'>0.34%</td></tr>
+<tr><td>Mon, Oct 26, 2026</td><td class='num'>16.6</td><td class='num'>18.4</td><td class='num'>0.80%</td><td class='num'>0.55%</td><td class='num'>0.38%</td></tr>
+<tr><td>Fri, Oct 23, 2026</td><td class='num'>17.8</td><td class='num'>19.4</td><td class='num'>0.98%</td><td class='num'>0.66%</td><td class='num'>0.45%</td></tr>
+<tr><td>Thu, Oct 22, 2026</td><td class='num'>17.3</td><td class='num'>19.0</td><td class='num'>1.00%</td><td class='num'>0.68%</td><td class='num'>0.47%</td></tr>
+<tr><td>Wed, Oct 21, 2026</td><td class='num'>15.4</td><td class='num'>16.7</td><td class='num'>0.67%</td><td class='num'>0.45%</td><td class='num'>0.31%</td></tr>
+<tr><td>Tue, Oct 20, 2026</td><td class='num'>15.9</td><td class='num'>17.3</td><td class='num'>0.80%</td><td class='num'>0.54%</td><td class='num'>0.37%</td></tr>
+<tr><td>Mon, Oct 19, 2026</td><td class='num'>16.6</td><td class='num'>18.4</td><td class='num'>1.01%</td><td class='num'>0.68%</td><td class='num'>0.47%</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>How this page is made</h2>
+  <ol>
+    <li>Every morning at 14:30 UTC, once CME's settlement prices from the evening before have reached Databento,
+        a GitHub Actions workflow pulls the latest session of E-mini S&amp;P 500 option settlements, with a
+        Databento API key stored as a repository secret.</li>
+    <li>It computes SVIX and the three probabilities for that session and adds the row to the history: one CSV,
+        kept on the repository's <code>monitor-history</code> branch, one small commit a day. The
+        <code>main</code> branch holds only code.</li>
+    <li>It rebuilds this page from the history and publishes it on the <code>gh-pages</code> branch, which
+        GitHub Pages serves.</li>
+  </ol>
+  <p>Last updated <a href="https://github.com/zhenqili2004/svix-crash-monitor/actions/runs/41339864534">November 1, 2026 at 19:06 UTC</a>, by a GitHub Actions run. Code and history: <a href="https://github.com/zhenqili2004/svix-crash-monitor">zhenqili2004/svix-crash-monitor</a>.</p>
+
+  <footer>
+    <p><strong>Sources:</strong> end-of-month E-mini S&amp;P 500 options (CME Globex, root <code>EW</code>), daily
+    settlement prices, from Databento; this page shows only quantities computed from them, never the prices.
+    The Cboe VIX (VIXCLS) and the one-month Treasury yield (DGS1MO), from FRED, Federal Reserve Bank of St. Louis.</p>
+    <p><strong>Methods:</strong> Ian Martin (2017), &ldquo;What is the Expected Return on the Market?&rdquo;
+    <em>Quarterly Journal of Economics</em> 132(1); Ian Martin and Ran Shi (2025), &ldquo;Forecasting Crashes with
+    a Smile.&rdquo; The engine that recovers the risk-neutral distribution is the work of Riley Haas and Marija
+    Jovicic.</p>
+    <p>Built for FINM 32800, Data Pipelines for Quantitative Research, University of Chicago.</p>
+  </footer>
+</main>
+</body>
+</html>
